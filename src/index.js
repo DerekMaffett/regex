@@ -1,4 +1,4 @@
-import applyRegex from './apply_regex';
+import applyRegex from './applyRegex';
 
 export default applyRegex;
 export { literal, anchorStart, anchorEnd, integer } from './conditions';
