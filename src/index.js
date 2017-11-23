@@ -1,5 +1,4 @@
 import applyRegex from './apply_regex';
-import { literal } from './conditions';
 
 export default applyRegex;
-export { literal };
+export { literal, anchorStart, anchorEnd, integer } from './conditions';

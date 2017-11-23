@@ -1,10 +1,10 @@
-const applyRegex = (conditions, testString) => {
-    const successfulPaths = conditions.reduce((possiblePaths, cond) => {
-        console.log(possiblePaths);
-        return cond(possiblePaths, testString);
-    }, [testString]);
+import { beginAnywhere } from './conditions';
 
-    console.log(successfulPaths);
+const applyRegex = (conditions, testString) => {
+    const successfulPaths = [beginAnywhere, ...conditions]
+        .reduce((possiblePaths, cond) => {
+            return cond(possiblePaths, testString);
+        }, [testString]);
 
     return successfulPaths.length > 0;
 }

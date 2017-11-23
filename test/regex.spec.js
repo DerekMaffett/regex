@@ -1,44 +1,85 @@
-import X, { literal } from '../src';
+import X, { literal, anchorStart, anchorEnd, integer } from '../src';
 
-console.log(X);
-describe('regex', function () {
-  it('should match strings', function () {
-    var regex = X([
-      literal('w'),
-      literal('o'),
-      literal('w')
-    ], 'wow');
+describe('regex', () => {
+    describe('literal', () => {
+        it('should match', () => {
+            const match = X([
+                literal('w'),
+                literal('o'),
+                literal('w')
+            ], 'dawow');
 
-    expect(regex).to.eq(true);
-  });
+            expect(match).to.eq(true);
+        });
 
-  // it('should match extended strings', function () {
-  //   var regex = X([
-  //     X.literal('w'),
-  //     X.literal('o'),
-  //     X.literal('w')
-  //   ], 'wow and how');
-  //
-  //   expect(regex).to.eq(true);
-  // });
-  //
-  // it('should match extended strings that do not start with the match', function () {
-  //   var regex = X([
-  //     X.literal('w'),
-  //     X.literal('o'),
-  //     X.literal('w')
-  //   ], 'stuff wow stuff');
-  //
-  //   expect(regex).to.eq(true);
-  // });
-  //
-  // it('should not match incorrect strings', function () {
-  //   var regex = X([
-  //     X.literal('w'),
-  //     X.literal('o'),
-  //     X.literal('w')
-  //   ], 'nope');
-  //
-  //   expect(regex).to.eq(false);
-  // });
+        it('should not match', () => {
+            const nonMatch = X([
+                literal('w'),
+                literal('o'),
+                literal('w')
+            ], 'cat');
+
+            expect(nonMatch).to.eq(false);
+        });
+    });
+
+    describe('anchorStart', () => {
+        it('should match', () => {
+            const match = X([
+                anchorStart,
+                literal('c'),
+            ], 'cat');
+
+            expect(match).to.eq(true);
+        });
+
+        it('should not match', () => {
+            const nonMatch = X([
+                anchorStart,
+                literal('c')
+            ], 'a cat');
+
+            expect(nonMatch).to.eq(false);
+        });
+    });
+
+    describe('anchorEnd', () => {
+        it('should match', () => {
+            const match = X([
+                literal('t'),
+                anchorEnd,
+            ], 'cat');
+
+            expect(match).to.eq(true);
+        });
+
+        it('should not match', () => {
+            const nonMatch = X([
+                literal('c'),
+                anchorEnd,
+            ], 'cat');
+
+            expect(nonMatch).to.eq(false);
+        });
+    });
+
+    describe('integer', () => {
+        it('should match', () => {
+            const match = X([
+                integer,
+                literal('a')
+            ], '7a');
+
+            expect(match).to.eq(true);
+        });
+
+        it('should not match', () => {
+            const nonMatch = X([
+                integer,
+                literal('b')
+            ], 'ab');
+
+            expect(nonMatch).to.eq(false);
+        });
+    });
 });
