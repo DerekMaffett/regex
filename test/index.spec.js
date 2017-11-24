@@ -13,6 +13,14 @@ describe('regex', () => {
             expect(matches).to.have.deep.members([match(1, 'wow'), match(3, 'wow')]);
         });
 
+        it('should match when concatenated', () => {
+            const matches = X([
+                literal('wow')
+            ], 'awowow');
+
+            expect(matches).to.have.deep.members([match(1, 'wow'), match(3, 'wow')]);
+        });
+
         it('should not match', () => {
             const matches = X([
                 literal('w'),

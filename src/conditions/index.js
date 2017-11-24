@@ -1,6 +1,7 @@
+import { pipe } from './../utils';
+
 const INTEGERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
-const pipe = (funcs) => (init) => funcs.reduce((accum, func) => func(accum), init);
 const take = (numToTake) => (string) => string.slice(0, numToTake);
 const getPath = (pathObj) => pathObj.path;
 const equals = (comparisonVal) => (value) => value === comparisonVal;
@@ -9,29 +10,42 @@ const consume = (numToConsume) => (pathObj) => ({
     startIndex: pathObj.startIndex,
     endIndex: pathObj.endIndex + numToConsume,
     path: pathObj.path.slice(numToConsume)
-})
+});
 
-export const literal = (character) => {
+const stringMap = (string, fn) => {
+    let map = [];
+
+    for (let i = 0; i < string.length; i++) {
+        map[i] = fn(string[i], i);
+    }
+
+    return map;
+};
+
+export const literal = (string) => {
     return (paths) => {
-        if (character === '') { return paths; }
+        if (string === '') { return paths; }
+        if (string.length > 1) {
+            return pipe(stringMap(string, (c) => literal(c)))(paths);
+        }
 
-        return paths.filter(pipe([getPath, take(1), equals(character)]))
+        return paths.filter(pipe([getPath, take(1), equals(string)]))
             .map(consume(1));
     };
 };
 
-export const anchorStart = (paths, testString) => {
-    return paths.filter((pathObj) => pathObj.path === testString);
+export const anchorStart = (paths) => {
+    return paths.filter(({ startIndex, endIndex }) => startIndex === 0 && endIndex === 0);
 };
 
 export const anchorEnd = (paths) => {
-    return paths.filter((pathObj) => pathObj.path === '');
+    return paths.filter(({ path }) => path === '');
 };
 
 export const integer = (paths) => {
     return paths.filter(pipe([getPath, take(1), isInteger])).map(consume(1));
 };
 
-export const lazy = (wrappedFn) => (paths, testString) => {
-    return paths.concat(wrappedFn(paths, testString));
+export const lazy = (wrappedFn) => (paths) => {
+    return paths.concat(wrappedFn(paths));
 };

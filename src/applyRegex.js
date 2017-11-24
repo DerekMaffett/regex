@@ -1,9 +1,8 @@
 import initialize from './initialize';
+import { pipe } from './utils';
 
 const applyRegex = (conditions, testString) => {
-    const matches = conditions.reduce((possiblePaths, cond) => {
-        return cond(possiblePaths, testString);
-    }, initialize(testString));
+    const matches = pipe(conditions)(initialize(testString));
 
     return matches.map(({ startIndex, endIndex }) => ({
         index: startIndex,
