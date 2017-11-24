@@ -1,4 +1,4 @@
-import X, { literal, anchorStart, anchorEnd, integer, lazy } from '../src';
+import X, { literal, anchorStart, anchorEnd, integer, lazy, oneOf } from '../src';
 import { match } from './utils';
 
 describe('regex', () => {
@@ -105,6 +105,21 @@ describe('regex', () => {
             expect(matches).to.have.deep.members([
                 match(0, 'cat'),
                 match(1, 'at')
+            ]);
+        });
+    });
+
+    describe('oneOf', () => {
+        it('should match', () => {
+            const matches = X([
+                oneOf([literal('c'), literal('b'), anchorStart]),
+                literal('at')
+            ], 'at cat rat sat bat');
+
+            expect(matches).to.have.deep.members([
+                match(0, 'at'),
+                match(3, 'cat'),
+                match(15, 'bat')
             ]);
         });
     });

@@ -1,4 +1,5 @@
 import { pipe } from './../utils';
+import { flatMap, uniqWith } from 'lodash';
 
 const INTEGERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
@@ -48,4 +49,11 @@ export const integer = (paths) => {
 
 export const lazy = (wrappedFn) => (paths) => {
     return paths.concat(wrappedFn(paths));
+};
+
+export const oneOf = (conditions) => (paths) => {
+    return uniqWith(flatMap(conditions, (cond) => cond(paths)), (path, otherPath) => {
+        return path.startIndex === otherPath.startIndex &&
+            path.endIndex === otherPath.endIndex;
+    });
 };

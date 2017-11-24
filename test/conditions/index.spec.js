@@ -1,4 +1,4 @@
-import { anchorStart, anchorEnd, beginAnywhere, literal, integer, lazy } from '../../src/conditions';
+import { anchorStart, anchorEnd, beginAnywhere, literal, integer, lazy, oneOf } from '../../src/conditions';
 import { path } from '../utils';
 
 describe('conditions', () => {
@@ -94,6 +94,21 @@ describe('conditions', () => {
                 path(3, 4, '8'),
                 path(1, 3, 't8'),
                 path(3, 5, '')
+            ]);
+        });
+    });
+
+    describe('oneOf', () => {
+        it('should return paths that satisfy any conditions without duplicates', function () {
+            const paths = oneOf([integer, literal('7'), literal('a')])([
+                path(0, 1, 'at c7t cot'),
+                path(4, 5, '7t cot'),
+                path(8, 9, 'ot')
+            ], 'cat c7t cot');
+
+            expect(paths).to.have.deep.members([
+                path(0, 2, 't c7t cot'),
+                path(4, 6, 't cot')
             ]);
         });
     });
