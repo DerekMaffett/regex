@@ -1,8 +1,12 @@
 import { pipe } from './../utils';
-import { flatMap, uniqWith } from 'lodash';
+import { unionWith, flatMap, uniqWith } from 'lodash';
 
 const INTEGERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
+const pathsAreEqual = (path, otherPath) => {
+    return path.startIndex === otherPath.startIndex &&
+        path.endIndex === otherPath.endIndex;
+}
 const take = (numToTake) => (string) => string.slice(0, numToTake);
 const getPath = (pathObj) => pathObj.path;
 const equals = (comparisonVal) => (value) => value === comparisonVal;
@@ -52,8 +56,19 @@ export const lazy = (wrappedFn) => (paths) => {
 };
 
 export const oneOf = (conditions) => (paths) => {
-    return uniqWith(flatMap(conditions, (cond) => cond(paths)), (path, otherPath) => {
-        return path.startIndex === otherPath.startIndex &&
-            path.endIndex === otherPath.endIndex;
-    });
+    return uniqWith(flatMap(conditions, (cond) => cond(paths)), pathsAreEqual);
+};
+
+export const greedy = (wrappedFn) => (paths) => {
+    let newPaths = paths;
+    let oldBaseLength = -1;
+    let base = [];
+
+    while (base.length > oldBaseLength) {
+        oldBaseLength = base.length;
+        newPaths = wrappedFn(newPaths);
+        base = unionWith(base, newPaths, pathsAreEqual);
+    }
+
+    return base;
 };

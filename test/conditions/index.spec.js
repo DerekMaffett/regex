@@ -1,4 +1,4 @@
-import { anchorStart, anchorEnd, beginAnywhere, literal, integer, lazy, oneOf } from '../../src/conditions';
+import { anchorStart, anchorEnd, beginAnywhere, literal, integer, lazy, greedy, oneOf } from '../../src/conditions';
 import { path } from '../utils';
 
 describe('conditions', () => {
@@ -109,6 +109,31 @@ describe('conditions', () => {
             expect(paths).to.have.deep.members([
                 path(0, 2, 't c7t cot'),
                 path(4, 6, 't cot')
+            ]);
+        });
+    });
+
+    describe('greedy', () => {
+        it('should return as many new paths that satisfy the condition as it can', function () {
+            const paths = greedy(integer)([
+                path(0, 0, 'c7878at98x'),
+                path(0, 1, '7878at98x'),
+                path(1, 1, '7878at98x'),
+                path(5, 5, '98x'),
+                path(8, 9, 'x')
+            ], 'c7878at98x');
+
+            expect(paths).to.have.deep.members([
+                path(0, 2, '878at98x'),
+                path(0, 3, '78at98x'),
+                path(0, 4, '8at98x'),
+                path(0, 5, 'at98x'),
+                path(1, 2, '878at98x'),
+                path(1, 3, '78at98x'),
+                path(1, 4, '8at98x'),
+                path(1, 5, 'at98x'),
+                path(5, 6, '8x'),
+                path(5, 7, 'x')
             ]);
         });
     });

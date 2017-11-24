@@ -1,4 +1,4 @@
-import X, { literal, anchorStart, anchorEnd, integer, lazy, oneOf } from '../src';
+import X, { literal, anchorStart, anchorEnd, integer, lazy, greedy, oneOf } from '../src';
 import { match } from './utils';
 
 describe('regex', () => {
@@ -120,6 +120,25 @@ describe('regex', () => {
                 match(0, 'at'),
                 match(3, 'cat'),
                 match(15, 'bat')
+            ]);
+        });
+    });
+
+    describe('greedy', () => {
+        it('should match', () => {
+            const matches = X([
+                greedy(literal('c')),
+                greedy(integer),
+                literal('at')
+            ], 'c7378at cccc4at 7578at c9at cat');
+
+            expect(matches).to.have.deep.members([
+                match(0, 'c7378at'),
+                match(8, 'cccc4at'),
+                match(9, 'ccc4at'),
+                match(10, 'cc4at'),
+                match(11, 'c4at'),
+                match(23, 'c9at'),
             ]);
         });
     });
