@@ -1,4 +1,4 @@
-import X, { literal, anchorStart, anchorEnd, integer } from '../src';
+import X, { literal, anchorStart, anchorEnd, integer, lazy } from '../src';
 import { match } from './utils';
 
 describe('regex', () => {
@@ -10,7 +10,7 @@ describe('regex', () => {
                 literal('w')
             ], 'awowow');
 
-            expect(matches).to.eql([match(1, 'wow'), match(3, 'wow')]);
+            expect(matches).to.have.deep.members([match(1, 'wow'), match(3, 'wow')]);
         });
 
         it('should not match', () => {
@@ -20,7 +20,7 @@ describe('regex', () => {
                 literal('w')
             ], 'cat');
 
-            expect(matches).to.eql([]);
+            expect(matches).to.have.deep.members([]);
         });
     });
 
@@ -31,7 +31,7 @@ describe('regex', () => {
                 literal('c'),
             ], 'cat');
 
-            expect(matches).to.eql([match(0, 'c')]);
+            expect(matches).to.have.deep.members([match(0, 'c')]);
         });
 
         it('should not match', () => {
@@ -40,7 +40,7 @@ describe('regex', () => {
                 literal('c')
             ], 'a cat');
 
-            expect(matches).to.eql([]);
+            expect(matches).to.have.deep.members([]);
         });
     });
 
@@ -48,19 +48,19 @@ describe('regex', () => {
         it('should match', () => {
             const matches = X([
                 literal('t'),
-                anchorEnd,
+                anchorEnd
             ], 'cat');
 
-            expect(matches).to.eql([match(2, 't')]);
+            expect(matches).to.have.deep.members([match(2, 't')]);
         });
 
         it('should not match', () => {
             const matches = X([
                 literal('c'),
-                anchorEnd,
+                anchorEnd
             ], 'cat');
 
-            expect(matches).to.eql([]);
+            expect(matches).to.have.deep.members([]);
         });
     });
 
@@ -71,7 +71,7 @@ describe('regex', () => {
                 literal('a')
             ], 'b37a');
 
-            expect(matches).to.eql([match(2, '7a')]);
+            expect(matches).to.have.deep.members([match(2, '7a')]);
         });
 
         it('should not match', () => {
@@ -80,7 +80,24 @@ describe('regex', () => {
                 literal('b')
             ], 'ab');
 
-            expect(matches).to.eql([]);
+            expect(matches).to.have.deep.members([]);
+        });
+    });
+
+    describe('lazy', () => {
+        it('should match', () => {
+            const matches = X([
+                lazy(literal('c')),
+                lazy(literal('a')),
+                literal('a'),
+                lazy(literal('w')),
+                literal('t')
+            ], 'cat');
+
+            expect(matches).to.have.deep.members([
+                match(0, 'cat'),
+                match(1, 'at')
+            ]);
         });
     });
 });

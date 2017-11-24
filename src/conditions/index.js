@@ -31,3 +31,7 @@ export const anchorEnd = (paths) => {
 export const integer = (paths) => {
     return paths.filter(pipe([getPath, take(1), isInteger])).map(consume(1));
 };
+
+export const lazy = (wrappedFn) => (paths, testString) => {
+    return paths.concat(wrappedFn(paths, testString));
+};

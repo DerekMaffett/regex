@@ -1,4 +1,4 @@
-import { anchorStart, anchorEnd, beginAnywhere, literal, integer } from '../../src/conditions';
+import { anchorStart, anchorEnd, beginAnywhere, literal, integer, lazy } from '../../src/conditions';
 import { path } from '../utils';
 
 describe('conditions', () => {
@@ -11,16 +11,26 @@ describe('conditions', () => {
                 path(3, 3, 'a')
             ], 'bata');
 
-            expect(paths).to.eql([
+            expect(paths).to.have.deep.members([
                 path(1, 2, 'ta'),
                 path(3, 4, '')
             ]);
         });
 
         it('should be a noop when the literal is empty', function () {
-            const paths = literal('')(['cat', 'at'], 'cat');
+            const paths = literal('')([
+                path(0, 0, 'bata'),
+                path(1, 1, 'ata'),
+                path(2, 2, 'ta'),
+                path(3, 3, 'a')
+            ], 'bata');
 
-            expect(paths).to.eql(['cat', 'at']);
+            expect(paths).to.have.deep.members([
+                path(0, 0, 'bata'),
+                path(1, 1, 'ata'),
+                path(2, 2, 'ta'),
+                path(3, 3, 'a')
+            ]);
         });
     });
 
@@ -33,7 +43,7 @@ describe('conditions', () => {
                 path(3, 3, '')
             ], 'cat');
 
-            expect(paths).to.eql([path(0, 0, 'cat')]);
+            expect(paths).to.have.deep.members([path(0, 0, 'cat')]);
         });
     });
 
@@ -46,7 +56,10 @@ describe('conditions', () => {
                 path(3, 3, '')
             ], 'cat');
 
-            expect(paths).to.eql([path(2, 3, ''), path(3, 3, '')]);
+            expect(paths).to.have.deep.members([
+                path(2, 3, ''),
+                path(3, 3, '')
+            ]);
         });
     });
 
@@ -60,7 +73,28 @@ describe('conditions', () => {
                 path(4, 4, '')
             ], '7at8');
 
-            expect(paths).to.eql([path(0, 1, 'at8'), path(3, 4, '')]);
+            expect(paths).to.have.deep.members([
+                path(0, 1, 'at8'),
+                path(3, 4, '')
+            ]);
+        });
+    });
+
+    describe('lazy', () => {
+        it('should add all returned paths from the wrapped function', function () {
+            const paths = lazy(integer)([
+                path(1, 2, '7t8'),
+                path(2, 3, 't8'),
+                path(3, 4, '8'),
+            ], '7t8');
+
+            expect(paths).to.have.deep.members([
+                path(1, 2, '7t8'),
+                path(2, 3, 't8'),
+                path(3, 4, '8'),
+                path(1, 3, 't8'),
+                path(3, 5, '')
+            ]);
         });
     });
 });
